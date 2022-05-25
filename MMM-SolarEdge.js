@@ -18,9 +18,9 @@ Module.register("MMM-SolarEdge",{
         // Logging appears in Chrome developer tools console
         Log.info("Starting module: " + this.name);
 
-        this.titles = ["Current Power:", "Daily Energy:", "Last Month:", "Last Year:", "Lifetime Energy:"];
+        this.titles = ["Current Power:", "Current Load:", "Feed to Grid:", "Daily Energy:", "Last Month:", "Last Year:", "Lifetime Energy:"];
         this.suffixes = ["Watts", "kWh", "kWh", "kWh", "MWh"];
-        this.results = ["Loading", "Loading", "Loading", "Loading", "Loading"];
+        this.results = ["Loading", "Loading", "Loading", "Loading", "Loading", "Loading", "Loading"];
         this.loaded = false;
         this.getSolarData();
 
@@ -61,13 +61,17 @@ Module.register("MMM-SolarEdge",{
             } else {
                this.results[0] = currentPower + " Watts";
             }
-            this.results[1] = (payload.overview.lastDayData.energy / 1000).toFixed(2) + " kWh";
-            this.results[2] = (payload.overview.lastMonthData.energy / 1000).toFixed(2) + " kWh";
-            this.results[3] = (payload.overview.lastYearData.energy / 1000).toFixed(2) + " kWh";
-            this.results[4] = (payload.overview.lifeTimeData.energy / 1000000).toFixed(2) + " MWh";
+            this.results[3] = (payload.overview.lastDayData.energy / 1000).toFixed(2) + " kWh";
+            this.results[4] = (payload.overview.lastMonthData.energy / 1000).toFixed(2) + " kWh";
+            this.results[5] = (payload.overview.lastYearData.energy / 1000).toFixed(2) + " kWh";
+            this.results[6] = (payload.overview.lifeTimeData.energy / 1000000).toFixed(2) + " MWh";
             this.loaded = true;
             this.updateDom(1000);
         }
+    if(notification === "POWER_FLOW") {
+        this.results[1] = (payload.siteCurrentPowerFlow.LOAD.currentPower).toFixed(2) + " kWh";
+        this.results[2] = (payload.siteCurrentPowerFlow.GRID.currentPower).toFixed(2) + " kWh";
+    }
     },
 
     // Override dom generator.
@@ -112,7 +116,7 @@ Module.register("MMM-SolarEdge",{
 
         		titleTr.innerHTML = this.titles[i];
 //        		dataTr.innerHTML = this.results[i] + " " + this.suffixes[i];
-            dataTr.innerHTML = this.results[i];
+                dataTr.innerHTML = this.results[i];
         		titleTr.className += " medium regular bright";
         		dataTr.classname += " medium light normal";
 

@@ -21,6 +21,16 @@ module.exports = NodeHelper.create({
 				        self.sendSocketNotification("SOLAR_DATA", jsonData);
 				}
 			});
+
+			var powerFlowUrl = payload.config.url + payload.config.siteId + "/currentPowerFlow?api_key=" + payload.config.apiKey;
+			request(powerFlowUrl, function (error, response, body) {
+				if (!error && response.statusCode == 200) {
+					var jsonData = JSON.parse(body);
+				        self.sendSocketNotification("POWER_FLOW", jsonData);
+				}
+			});
 		}
+
+		
 	},
 });
